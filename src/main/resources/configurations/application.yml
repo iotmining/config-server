@@ -1,0 +1,12 @@
+# Shared across all microservices
+eureka:
+  instance:
+    hostname: config-server
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+
+spring:
+  cloud:
+    config:
+      override.system-properties: false
