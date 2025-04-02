@@ -1,12 +1,75 @@
 # Shared across all microservices
-eureka:
-  instance:
-    hostname: config-server
-  client:
-    service-url:
-      defaultZone: http://eureka-server:8761/eureka/
+#
+#spring:
+#  cloud:
+#    config:
+#      override.system-properties: false
 
 spring:
+  application:
+    name: common-config
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}  # Default to dev, override in K8s
+  config:
+    import: "optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}"
   cloud:
     config:
-      override.system-properties: false
+      fail-fast: true  # Fail startup if config server is unreachable
+      retry:
+        max-attempts: 5
+        initial-interval: 2000ms
+        max-interval: 10000ms
+        multiplier: 2
+
+server:
+  port: 0  # Random port allocation to avoid conflicts
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true  # Use IP instead of hostname for discovery
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus  # Monitoring enabled
+  health:
+    circuitbreakers:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0  # Enable distributed tracing
+
+logging:
+  level:
+    root: INFO
+    org.springframework: WARN
+    com.iotmining: DEBUG  # Adjust as needed
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 5
+        slow-call-duration-threshold: 2000ms
+        slow-call-rate-threshold: 50
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 2s
+  ratelimiter:
+    configs:
+      default:
+        limit-for-period: 10
+        limit-refresh-period: 1s
+
+---
