@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: "https://github.com/S-8506/configuration.git"
+          clone-on-start: true
+          username: "S-8506"
+          password: "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" # You can set via ENV vars in local
+          default-label: "main"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: "http://localhost:8761/eureka/"
