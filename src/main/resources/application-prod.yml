@@ -4,6 +4,7 @@ spring:
       server:
         git:
           uri: ${SPRING_CLOUD_CONFIG_SERVER_GIT_URI}
+          clone-on-start: true
           username: ${SPRING_CLOUD_CONFIG_SERVER_GIT_USERNAME}
           password: ${SPRING_CLOUD_CONFIG_SERVER_GIT_PASSWORD}
           default-label: ${CONFIG_GIT_BRANCH:main}

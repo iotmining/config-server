@@ -2,7 +2,7 @@ spring:
   application:
     name: config-server
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}  # Default profile is "dev"
+    active: ${SPRING_PROFILES_ACTIVE:prod}  # Default profile is "dev"
 
 server:
   port: 8888
